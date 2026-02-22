@@ -1,0 +1,171 @@
+// קובץ זה מכיל את מודל המוצרים עם MySQL
+// קובץ זה נשמר לשלב מאוחר יותר - כרגע לא בשימוש
+// כדי להשתמש בו, שנה את השם ל-Product.js והסר את הסיומת .mysql.js.backup
+
+// מודל זה מגדיר את מבנה הנתונים והפונקציות לעבודה עם מוצרים (טלפונים)
+// כל פונקציה מבצעת פעולת CRUD על טבלת המוצרים במסד הנתונים
+
+const { pool } = require('../config/database'); // ייבוא pool החיבורים למסד הנתונים
+
+class Product {
+  // פונקציה ליצירת טבלת מוצרים אם היא לא קיימת
+  // פונקציה זו רצה פעם אחת בעת התחלת האפליקציה
+  static async createTable() {
+    const query = `
+      CREATE TABLE IF NOT EXISTS products (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        price DECIMAL(10, 2) NOT NULL,
+        description TEXT,
+        category VARCHAR(100),
+        image VARCHAR(500),
+        brand VARCHAR(100),
+        model VARCHAR(100),
+        storage VARCHAR(50),
+        color VARCHAR(50),
+        stock INT DEFAULT 0,
+        rating DECIMAL(3, 2) DEFAULT 0,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `;
+    
+    try {
+      await pool.execute(query); // מבצע את השאילתה ליצירת הטבלה
+      console.log('✅ טבלת products נוצרה בהצלחה');
+    } catch (error) {
+      console.error('❌ שגיאה ביצירת טבלת products:', error.message);
+      throw error;
+    }
+  }
+
+  // פונקציה לקבלת כל המוצרים מהמסד נתונים
+  // מחזירה רשימה של כל הטלפונים בחנות
+  static async getAll() {
+    const query = 'SELECT * FROM products ORDER BY createdAt DESC';
+    try {
+      const [rows] = await pool.execute(query); // מבצע שאילתת SELECT
+      return rows; // מחזיר את כל המוצרים
+    } catch (error) {
+      console.error('❌ שגיאה בקבלת מוצרים:', error.message);
+      throw error;
+    }
+  }
+
+  // פונקציה לקבלת מוצר בודד לפי ID
+  // משמשת להצגת פרטי טלפון ספציפי
+  static async getById(id) {
+    const query = 'SELECT * FROM products WHERE id = ?';
+    try {
+      const [rows] = await pool.execute(query, [id]); // מבצע שאילתה עם פרמטר ID
+      return rows[0] || null; // מחזיר את המוצר או null אם לא נמצא
+    } catch (error) {
+      console.error('❌ שגיאה בקבלת מוצר:', error.message);
+      throw error;
+    }
+  }
+
+  // פונקציה ליצירת מוצר חדש
+  // מוסיפה טלפון חדש למסד הנתונים
+  static async create(productData) {
+    const {
+      title,
+      price,
+      description,
+      category,
+      image,
+      brand,
+      model,
+      storage,
+      color,
+      stock,
+      rating
+    } = productData;
+
+    const query = `
+      INSERT INTO products 
+      (title, price, description, category, image, brand, model, storage, color, stock, rating)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [
+      title,
+      price,
+      description,
+      category,
+      image,
+      brand,
+      model,
+      storage,
+      color,
+      stock || 0,
+      rating || 0
+    ];
+
+    try {
+      const [result] = await pool.execute(query, values); // מבצע INSERT
+      return await this.getById(result.insertId); // מחזיר את המוצר שנוצר עם ID החדש
+    } catch (error) {
+      console.error('❌ שגיאה ביצירת מוצר:', error.message);
+      throw error;
+    }
+  }
+
+  // פונקציה לעדכון מוצר קיים
+  // מעדכנת פרטי טלפון במסד הנתונים
+  static async update(id, productData) {
+    const fields = []; // רשימה של שדות לעדכון
+    const values = []; // רשימה של ערכים לעדכון
+
+    // בונה דינמית את רשימת השדות לעדכון
+    Object.keys(productData).forEach(key => {
+      if (productData[key] !== undefined) {
+        fields.push(`${key} = ?`); // מוסיף שדה לרשימה
+        values.push(productData[key]); // מוסיף ערך לרשימה
+      }
+    });
+
+    if (fields.length === 0) {
+      return await this.getById(id); // אם אין שדות לעדכון, מחזיר את המוצר הקיים
+    }
+
+    values.push(id); // מוסיף את ה-ID לסוף הרשימה
+    const query = `UPDATE products SET ${fields.join(', ')} WHERE id = ?`;
+
+    try {
+      await pool.execute(query, values); // מבצע UPDATE
+      return await this.getById(id); // מחזיר את המוצר המעודכן
+    } catch (error) {
+      console.error('❌ שגיאה בעדכון מוצר:', error.message);
+      throw error;
+    }
+  }
+
+  // פונקציה למחיקת מוצר
+  // מוחקת טלפון ממסד הנתונים
+  static async delete(id) {
+    const query = 'DELETE FROM products WHERE id = ?';
+    try {
+      const [result] = await pool.execute(query, [id]); // מבצע DELETE
+      return result.affectedRows > 0; // מחזיר true אם המוצר נמחק, false אחרת
+    } catch (error) {
+      console.error('❌ שגיאה במחיקת מוצר:', error.message);
+      throw error;
+    }
+  }
+
+  // פונקציה לחיפוש מוצרים לפי קטגוריה
+  // מחזירה רק טלפונים מהקטגוריה המבוקשת
+  static async getByCategory(category) {
+    const query = 'SELECT * FROM products WHERE category = ? ORDER BY createdAt DESC';
+    try {
+      const [rows] = await pool.execute(query, [category]);
+      return rows;
+    } catch (error) {
+      console.error('❌ שגיאה בקבלת מוצרים לפי קטגוריה:', error.message);
+      throw error;
+    }
+  }
+}
+
+module.exports = Product;

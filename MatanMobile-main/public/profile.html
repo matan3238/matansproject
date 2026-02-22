@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הפרופיל שלי - Matan Mobile</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">📱 Matan Mobile</a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="תפריט">☰</button>
+            <div class="nav-overlay" id="navOverlay"></div>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="index.html">בית</a></li>
+                    <li><a href="products.html">מוצרים</a></li>
+                    <li><a href="cart.html" class="cart-icon">
+                        🛒
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a></li>
+                </ul>
+                <div class="mobile-auth" id="mobileAuth"></div>
+            </nav>
+            <div class="user-menu">
+                <a href="login.html" class="btn btn-secondary">התחבר</a>
+                <a href="register.html" class="btn btn-primary">הרשם</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="profileContent" style="display: none;">
+            <div class="profile-layout">
+            <aside class="profile-sidebar">
+                <h3>אזור אישי</h3>
+                <nav>
+                    <a href="profile.html#profile-details" id="nav-details">👤 פרטים אישיים</a>
+                    <a href="profile.html#profile-address" id="nav-address">🏠 פרטי חיוב ומשלוח</a>
+                    <a href="profile.html#profile-credit" id="nav-credit">💳 אמצעי תשלום שמורים</a>
+                    <a href="profile.html#profile-orders" id="nav-orders">📦 ההזמנות שלי</a>
+                    <a href="admin.html" id="nav-admin" style="display: none;">⚙️ לוח בקרה</a>
+                    <a href="profile.html#profile-email">✉️ שינוי אימייל</a>
+                    <a href="profile.html#profile-password">🔒 שינוי סיסמה</a>
+                </nav>
+            </aside>
+            <div class="profile-main">
+            <div class="profile-header">
+                <img id="profileAvatar" class="profile-avatar" src="https://via.placeholder.com/120" alt="תמונת פרופיל">
+                <div>
+                    <div class="profile-name" id="profileName">שם המשתמש</div>
+                    <div id="profileEmail" class="profile-welcome"></div>
+                    <p class="profile-welcome mt">ברוכים הבאים לאזור האישי. כאן תוכלו לנהל את הפרטים, ההזמנות ואמצעי התשלום.</p>
+                </div>
+            </div>
+
+            <!-- פרטים אישיים -->
+            <div class="profile-section" id="profile-details">
+                <h2>👤 פרטים אישיים</h2>
+                <p class="section-desc">עדכנו את הפרטים האישיים שלכם. השם והתמונה יוצגו בחשבון ובהזמנות.</p>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label>תמונת פרופיל (קישור לתמונה):</label>
+                        <input type="url" id="profileImage" placeholder="https://example.com/photo.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label>שם פרטי:</label>
+                        <input type="text" id="firstName">
+                    </div>
+                    <div class="form-group">
+                        <label>שם משפחה:</label>
+                        <input type="text" id="lastName">
+                    </div>
+                    <div class="form-group">
+                        <label>טלפון:</label>
+                        <input type="tel" id="phone">
+                    </div>
+                    <button type="submit" class="btn btn-primary">שמור שינויים</button>
+                </form>
+            </div>
+
+            <!-- כתובת -->
+            <div class="profile-section" id="profile-address">
+                <h2>🏠 פרטי חיוב ומשלוח</h2>
+                <p class="section-desc">הגדירו את כתובת המשלוח שלכם. הכתובת תשמש אוטומטית בעת ביצוע הזמנות ותופיע בחשבונית.</p>
+                <form id="addressForm">
+                    <div class="form-group">
+                        <label>כתובת מלאה:</label>
+                        <textarea id="address" rows="3" placeholder="רחוב, עיר, מיקוד"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">שמור כתובת</button>
+                </form>
+            </div>
+
+            <!-- כרטיס אשראי -->
+            <div class="profile-section" id="profile-credit">
+                <h2>💳 אמצעי תשלום שמורים</h2>
+                <p class="section-desc">נהלו את כרטיסי האשראי השמורים לחשבון. מסיבות אבטחה, נשמרות רק 4 הספרות האחרונות של הכרטיס.</p>
+                <div id="creditDisplay" class="credit-display">
+                    <span class="credit-masked">**** **** **** <span id="creditLast4">----</span></span>
+                </div>
+                <form id="creditForm">
+                    <div class="form-group">
+                        <label>4 ספרות אחרונות של כרטיס אשראי:</label>
+                        <input type="text" id="creditCardLast4" maxlength="4" pattern="\d{4}" placeholder="1234">
+                    </div>
+                    <button type="submit" class="btn btn-primary">עדכן</button>
+                </form>
+            </div>
+
+            <!-- היסטוריית הזמנות -->
+            <div class="profile-section" id="profile-orders">
+                <h2>📦 ההזמנות שלי</h2>
+                <p class="section-desc">צפו בכל ההזמנות שביצעתם – תאריך, פריטים וסכום. ניתן לעקוב אחרי סטטוס המשלוח.</p>
+                <div id="ordersList">
+                    <div class="loading">טוען הזמנות...</div>
+                </div>
+            </div>
+
+            <!-- שינוי אימייל -->
+            <div class="profile-section" id="profile-email">
+                <h2>✉️ שינוי אימייל</h2>
+                <p class="section-desc">שנו את כתובת האימייל המשויכת לחשבון. האימייל החדש ישמש להתחברות ולקבלת עדכונים.</p>
+                <form id="emailForm">
+                    <div class="form-group">
+                        <label>אימייל חדש:</label>
+                        <input type="email" id="newEmail" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">עדכן אימייל</button>
+                </form>
+            </div>
+
+            <!-- שינוי סיסמה -->
+            <div class="profile-section" id="profile-password">
+                <h2>🔒 שינוי סיסמה</h2>
+                <p class="section-desc">החליפו את סיסמת החשבון. מומלץ להשתמש בסיסמה חזקה הכוללת אותיות, מספרים וסימנים.</p>
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <label>סיסמה נוכחית:</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label>סיסמה חדשה:</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">עדכן סיסמה</button>
+                </form>
+            </div>
+
+            <!-- מחיקת חשבון -->
+            <div class="profile-section danger-zone">
+                <h2>מחיקת חשבון</h2>
+                <p>מחיקת החשבון היא פעולה בלתי הפיכה. כל הנתונים יימחקו לצמיתות.</p>
+                <button type="button" class="btn btn-danger" id="deleteAccountBtn">מחק את החשבון שלי</button>
+            </div>
+            </div>
+            </div>
+        </div>
+
+        <div id="loginPrompt" class="form-container" style="display: none;">
+            <h1>התחבר לחשבון</h1>
+            <p>כדי לצפות בפרופיל שלך, לנהל הזמנות ולעדכן פרטים – עליך להתחבר לחשבון.</p>
+            <p class="form-footer">עדיין אין לך חשבון? <a href="register.html">הירשם כאן</a></p>
+            <a href="login.html" class="btn btn-primary">התחבר</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Matan Mobile</h3>
+                <p>רשת מוביל וחנות טלפונים מובילה בישראל</p>
+            </div>
+            <div class="footer-section">
+                <h3>קישורים מהירים</h3>
+                <ul>
+                    <li><a href="index.html">בית</a></li>
+                    <li><a href="products.html">מוצרים</a></li>
+                    <li><a href="cart.html">סל קניות</a></li>
+                    <li><a href="profile.html">הפרופיל שלי</a></li>
+                    <li><a href="about.html">אודותינו</a></li>
+                    <li><a href="contact.html">יצירת קשר</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>יצירת קשר</h3>
+                <ul>
+                    <li>טלפון: 03-1234567</li>
+                    <li>אימייל: info@matanmobile.co.il</li>
+                    <li>כתובת: תל אביב, ישראל</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>עקבו אחרינו</h3>
+                <ul>
+                    <li><a href="https://facebook.com" target="_blank" rel="noopener">פייסבוק</a></li>
+                    <li><a href="https://instagram.com" target="_blank" rel="noopener">אינסטגרם</a></li>
+                    <li><a href="https://twitter.com" target="_blank" rel="noopener">טוויטר</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Matan Mobile. כל הזכויות שמורות.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('currentUser');
+            if (!userStr) {
+                document.getElementById('profileContent').style.display = 'none';
+                document.getElementById('loginPrompt').style.display = 'block';
+                return;
+            }
+            currentUser = JSON.parse(userStr);
+            document.getElementById('profileContent').style.display = 'block';
+            document.getElementById('loginPrompt').style.display = 'none';
+            loadUserProfile();
+            loadOrders();
+            setupForms();
+            scrollToProfileSection();
+            setupProfileNavHighlight();
+        });
+
+        function fillProfileForm(u) {
+            document.getElementById('profileName').textContent = (u.firstName && u.lastName) ? `${u.firstName} ${u.lastName}` : u.email;
+            document.getElementById('profileEmail').textContent = u.email || '';
+            document.getElementById('profileAvatar').src = u.profileImage || 'https://via.placeholder.com/120';
+            document.getElementById('profileImage').value = u.profileImage || '';
+            document.getElementById('firstName').value = u.firstName || '';
+            document.getElementById('lastName').value = u.lastName || '';
+            document.getElementById('phone').value = u.phone || '';
+            document.getElementById('address').value = u.address || '';
+            document.getElementById('creditLast4').textContent = u.creditCardLast4 || '----';
+            document.getElementById('newEmail').value = u.email || '';
+        }
+
+        async function loadUserProfile() {
+            try {
+                const res = await apiFetch(`/api/users/${currentUser.id}`);
+                const result = await res.json();
+                if (result.success) {
+                    const u = result.data;
+                    currentUser = u;
+                    localStorage.setItem('currentUser', JSON.stringify(u));
+                    fillProfileForm(u);
+                    const adminLink = document.getElementById('nav-admin');
+                    if (adminLink && (u.isAdmin || u.email === 'admin@matan.com')) adminLink.style.display = 'block';
+                } else {
+                    fillProfileForm(currentUser);
+                }
+            } catch (e) {
+                fillProfileForm(currentUser);
+            }
+        }
+
+        async function loadOrders() {
+            try {
+                const res = await apiFetch(`/api/orders/${currentUser.id}`);
+                const result = await res.json();
+                const container = document.getElementById('ordersList');
+                if (result.success && result.data.length > 0) {
+                    container.innerHTML = result.data.map((o) => {
+                        const statusLabel = o.status === 'cancelled' ? 'בוטלה' : (o.status === 'pending' ? 'ממתינה' : 'הושלמה');
+                        const statusClass = o.status === 'cancelled' ? 'cancelled' : o.status === 'pending' ? 'pending' : 'completed';
+                        const canEdit = o.status !== 'cancelled';
+                        return `
+                        <div class="order-card ${o.status === 'cancelled' ? 'order-card-cancelled' : ''}" data-order-id="${o.id}">
+                            <div class="order-card-main" onclick="toggleOrderDetail(${o.id})">
+                                <div class="order-card-header">
+                                    <strong>הזמנה #${o.id}</strong>
+                                    <span class="order-status order-status-${statusClass}">${statusLabel}</span>
+                                    <span class="order-date">${new Date(o.createdAt).toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
+                                </div>
+                                <div class="order-card-desc">${o.items.length} פריטים • ${o.items.map(item => item.title).join(', ')}</div>
+                                <div class="order-total">סה"כ: ₪${o.total.toLocaleString()}</div>
+                                <span class="order-expand-icon">▼</span>
+                            </div>
+                            <div class="order-card-detail" id="order-detail-${o.id}" style="display: none;">
+                                <div class="order-detail-items">
+                                    <strong>פריטים:</strong>
+                                    ${o.items.map(item => `<div class="order-detail-item">${item.title} × ${item.quantity} — ₪${(item.price * item.quantity).toLocaleString()}</div>`).join('')}
+                                </div>
+                                <div class="order-detail-address">
+                                    <strong>כתובת משלוח:</strong>
+                                    <span id="order-address-${o.id}">${o.address || 'לא צוינה'}</span>
+                                </div>
+                                ${canEdit ? `
+                                <div class="order-detail-actions">
+                                    <div class="order-address-edit" id="order-address-edit-${o.id}" style="display: none;">
+                                        <input type="text" id="order-address-input-${o.id}" value="${(o.address || '').replace(/"/g, '&quot;')}" placeholder="הזן כתובת חדשה">
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="saveOrderAddress(${o.id})">שמור</button>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="cancelOrderAddressEdit(${o.id})">ביטול</button>
+                                    </div>
+                                    <div class="order-actions-btns" id="order-actions-${o.id}">
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); editOrderAddress(${o.id})">שנה כתובת</button>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="event.stopPropagation(); cancelOrderConfirm(${o.id})">בטל הזמנה</button>
+                                    </div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `}).join('');
+                } else {
+                    container.innerHTML = `
+                        <p class="order-empty-msg">אין הזמנות עדיין. לאחר ביצוע רכישה תופיע כאן היסטוריית ההזמנות שלך.</p>
+                        <a href="products.html" class="btn btn-primary">עבור למוצרים</a>
+                    `;
+                }
+            } catch (e) {
+                document.getElementById('ordersList').innerHTML = '<p class="order-error">שגיאה בטעינת ההזמנות</p>';
+            }
+        }
+
+        function toggleOrderDetail(orderId) {
+            const detail = document.getElementById('order-detail-' + orderId);
+            const card = detail?.closest('.order-card');
+            if (!detail || !card) return;
+            const isOpen = detail.style.display !== 'none';
+            document.querySelectorAll('.order-card-detail').forEach(el => { el.style.display = 'none'; });
+            document.querySelectorAll('.order-card').forEach(c => c.classList.remove('order-card-open'));
+            if (!isOpen) {
+                detail.style.display = 'block';
+                card.classList.add('order-card-open');
+            }
+        }
+
+        function editOrderAddress(orderId) {
+            document.getElementById('order-address-edit-' + orderId).style.display = 'flex';
+            document.getElementById('order-actions-' + orderId).style.display = 'none';
+        }
+
+        function cancelOrderAddressEdit(orderId) {
+            document.getElementById('order-address-edit-' + orderId).style.display = 'none';
+            document.getElementById('order-actions-' + orderId).style.display = 'flex';
+        }
+
+        async function saveOrderAddress(orderId) {
+            const input = document.getElementById('order-address-input-' + orderId);
+            const address = input?.value?.trim() || '';
+            try {
+                const res = await apiFetch(`/api/orders/${currentUser.id}/${orderId}/address`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    document.getElementById('order-address-' + orderId).textContent = address || 'לא צוינה';
+                    cancelOrderAddressEdit(orderId);
+                    showAlert('הכתובת עודכנה בהצלחה', 'success');
+                } else showAlert(result.message || 'שגיאה', 'error');
+            } catch (e) {
+                showAlert('שגיאה בעדכון', 'error');
+            }
+        }
+
+        async function cancelOrderConfirm(orderId) {
+            if (!confirm('האם אתה בטוח שברצונך לבטל את ההזמנה? פעולה זו בלתי הפיכה.')) return;
+            try {
+                const res = await apiFetch(`/api/orders/${currentUser.id}/${orderId}`, { method: 'DELETE' });
+                const result = await res.json();
+                if (result.success) {
+                    showAlert('ההזמנה בוטלה בהצלחה', 'success');
+                    loadOrders();
+                } else showAlert(result.message || 'שגיאה', 'error');
+            } catch (e) {
+                showAlert('שגיאה בביטול', 'error');
+            }
+        }
+
+        function scrollToProfileSection() {
+            const hash = window.location.hash;
+            if (hash) {
+                setTimeout(() => {
+                    const el = document.querySelector(hash);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 300);
+            }
+        }
+
+        function setupProfileNavHighlight() {
+            const updateActive = () => {
+                const hash = window.location.hash || '#profile-details';
+                document.querySelectorAll('.profile-sidebar a').forEach(a => {
+                    a.classList.toggle('active', a.getAttribute('href') === 'profile.html' + hash);
+                });
+            };
+            updateActive();
+            window.addEventListener('hashchange', updateActive);
+        }
+
+        function setupForms() {
+            document.getElementById('profileForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = e.target.querySelector('button[type="submit"]');
+                const originalText = btn.textContent;
+                btn.disabled = true;
+                btn.textContent = 'שומר...';
+                try {
+                    const res = await apiFetch(`/api/users/${currentUser.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            firstName: document.getElementById('firstName').value,
+                            lastName: document.getElementById('lastName').value,
+                            phone: document.getElementById('phone').value,
+                            profileImage: document.getElementById('profileImage').value || ''
+                        })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        saveUserToStorage(result.data);
+                        currentUser = result.data;
+                        document.getElementById('profileAvatar').src = result.data.profileImage || 'https://via.placeholder.com/120';
+                        document.getElementById('profileName').textContent = (result.data.firstName && result.data.lastName) ? `${result.data.firstName} ${result.data.lastName}` : result.data.email;
+                        showAlert('הפרטים נשמרו בהצלחה', 'success');
+                    } else showAlert(result.message || 'שגיאה', 'error');
+                } catch (e) { showAlert('שגיאה בשמירה', 'error'); }
+                finally { btn.disabled = false; btn.textContent = originalText; }
+            });
+
+            document.getElementById('addressForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = e.target.querySelector('button[type="submit"]');
+                const originalText = btn.textContent;
+                btn.disabled = true;
+                btn.textContent = 'שומר...';
+                try {
+                    const res = await apiFetch(`/api/users/${currentUser.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ address: document.getElementById('address').value })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        saveUserToStorage(result.data);
+                        showAlert('הכתובת נשמרה בהצלחה', 'success');
+                    } else showAlert(result.message || 'שגיאה', 'error');
+                } catch (e) { showAlert('שגיאה בשמירה', 'error'); }
+                finally { btn.disabled = false; btn.textContent = originalText; }
+            });
+
+            document.getElementById('creditForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const last4 = document.getElementById('creditCardLast4').value;
+                if (last4.length !== 4 || !/^\d{4}$/.test(last4)) {
+                    showAlert('הזן 4 ספרות בלבד', 'error');
+                    return;
+                }
+                try {
+                    const res = await apiFetch(`/api/users/${currentUser.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ creditCardLast4: last4 })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        saveUserToStorage(result.data);
+                        document.getElementById('creditLast4').textContent = last4;
+                        document.getElementById('creditCardLast4').value = '';
+                        showAlert('פרטי האשראי עודכנו', 'success');
+                    } else showAlert(result.message || 'שגיאה', 'error');
+                } catch (e) { showAlert('שגיאה בשמירה', 'error'); }
+            });
+
+            document.getElementById('emailForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const newEmail = document.getElementById('newEmail').value;
+                try {
+                    const res = await apiFetch(`/api/users/${currentUser.id}/email`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ newEmail })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        saveUserToStorage(result.data);
+                        currentUser = result.data;
+                        document.getElementById('profileEmail').textContent = result.data.email;
+                        showAlert('האימייל עודכן בהצלחה', 'success');
+                    } else showAlert(result.message || 'שגיאה', 'error');
+                } catch (e) { showAlert('שגיאה בעדכון', 'error'); }
+            });
+
+            document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                try {
+                    const res = await apiFetch(`/api/users/${currentUser.id}/password`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ currentPassword, newPassword })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        document.getElementById('currentPassword').value = '';
+                        document.getElementById('newPassword').value = '';
+                        showAlert('הסיסמה עודכנה בהצלחה', 'success');
+                    } else showAlert(result.message || 'שגיאה', 'error');
+                } catch (e) { showAlert('שגיאה בעדכון', 'error'); }
+            });
+
+            document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
+                if (!confirm('האם אתה בטוח שברצונך למחוק את החשבון? פעולה זו בלתי הפיכה!')) return;
+                try {
+                    const res = await apiFetch(`/api/users/${currentUser.id}`, { method: 'DELETE' });
+                    const result = await res.json();
+                    if (result.success) {
+                        saveUserToStorage(null);
+                        showAlert('החשבון נמחק', 'success');
+                        setTimeout(() => window.location.href = 'index.html', 1500);
+                    } else showAlert(result.message || 'שגיאה', 'error');
+                } catch (e) { showAlert('שגיאה במחיקה', 'error'); }
+            });
+        }
+    </script>
+</body>
+</html>

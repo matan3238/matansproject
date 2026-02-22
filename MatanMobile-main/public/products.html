@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מוצרים - Matan Mobile</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header - כותרת עליונה -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">📱 Matan Mobile</a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="תפריט">☰</button>
+            <div class="nav-overlay" id="navOverlay"></div>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="index.html">בית</a></li>
+                    <li><a href="products.html">מוצרים</a></li>
+                    <li><a href="cart.html" class="cart-icon">
+                        🛒
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a></li>
+                </ul>
+                <div class="mobile-auth" id="mobileAuth"></div>
+            </nav>
+            <div class="user-menu">
+                <a href="login.html" class="btn btn-secondary">התחבר</a>
+                <a href="register.html" class="btn btn-primary">הרשם</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content - תוכן ראשי -->
+    <main class="container products-page">
+        <h1 class="page-title">כל המוצרים</h1>
+
+        <!-- Categories - קטגוריות -->
+        <section class="categories">
+            <!-- הקטגוריות יטענו דרך JavaScript -->
+        </section>
+
+        <!-- Brand Filter - סינון לפי מותג -->
+        <section class="filters-section" id="brandFiltersSection">
+            <h3 class="filters-label">סינון לפי מותג</h3>
+            <div class="brand-filters" id="brandFilters">
+                <!-- לוגואים יטענו דרך JavaScript -->
+            </div>
+        </section>
+
+        <!-- Storage Filter - סינון לפי נפח אחסון -->
+        <section class="filters-section" id="storageFiltersSection">
+            <h3 class="filters-label">סינון לפי נפח אחסון</h3>
+            <div class="storage-filters" id="storageFilters">
+                <!-- אפשרויות יטענו דרך JavaScript -->
+            </div>
+        </section>
+
+        <!-- Products Grid - רשת מוצרים -->
+        <section class="products-section">
+        <div class="products-grid">
+            <!-- המוצרים יטענו דרך JavaScript -->
+            <div class="loading">טוען מוצרים...</div>
+        </div>
+        </section>
+    </main>
+
+    <!-- Footer - כותרת תחתונה -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Matan Mobile</h3>
+                <p>רשת מוביל וחנות טלפונים מובילה בישראל</p>
+            </div>
+            <div class="footer-section">
+                <h3>קישורים מהירים</h3>
+                <ul>
+                    <li><a href="index.html">בית</a></li>
+                    <li><a href="products.html">מוצרים</a></li>
+                    <li><a href="cart.html">סל קניות</a></li>
+                    <li><a href="profile.html">הפרופיל שלי</a></li>
+                    <li><a href="about.html">אודותינו</a></li>
+                    <li><a href="contact.html">יצירת קשר</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>יצירת קשר</h3>
+                <ul>
+                    <li>טלפון: 03-1234567</li>
+                    <li>אימייל: info@matanmobile.co.il</li>
+                    <li>כתובת: תל אביב, ישראל</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>עקבו אחרינו</h3>
+                <ul>
+                    <li><a href="https://facebook.com" target="_blank" rel="noopener">פייסבוק</a></li>
+                    <li><a href="https://instagram.com" target="_blank" rel="noopener">אינסטגרם</a></li>
+                    <li><a href="https://twitter.com" target="_blank" rel="noopener">טוויטר</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Matan Mobile. כל הזכויות שמורות.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            productsFilters = {
+                category: urlParams.get('category') || '',
+                brand: urlParams.get('brand') || '',
+                storage: urlParams.get('storage') || ''
+            };
+            
+            await loadFilterOptions();
+            await loadProducts(productsFilters);
+            updateFilterActiveStates();
+        });
+    </script>
+</body>
+</html>

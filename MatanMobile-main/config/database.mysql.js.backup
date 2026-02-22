@@ -1,0 +1,81 @@
+// קובץ זה מכיל את קוד החיבור ל-MySQL
+// קובץ זה נשמר לשלב מאוחר יותר - כרגע לא בשימוש
+// כדי להשתמש בו, שנה את השם ל-database.js והסר את הסיומת .backup
+
+// קובץ זה מגדיר את החיבור למסד הנתונים MySQL
+// משתמש ב-mysql2 ליצירת חיבור למסד הנתונים
+
+const mysql = require('mysql2/promise'); // ייבוא ספריית mysql2 עם תמיכה ב-promises
+require('dotenv').config(); // טוען משתני סביבה מקובץ .env
+
+// קבלת פרטי החיבור למסד הנתונים
+const dbConfig = {
+  host: process.env.DB_HOST || 'localhost', // כתובת שרת מסד הנתונים
+  user: process.env.DB_USER || 'root', // שם משתמש למסד הנתונים
+  password: process.env.DB_PASSWORD || '', // סיסמה למסד הנתונים
+  waitForConnections: true, // ממתין לחיבור פנוי אם כל החיבורים תפוסים
+  connectionLimit: 10, // מספר מקסימלי של חיבורים ב-pool
+  queueLimit: 0 // אין הגבלה על מספר הבקשות בתור
+};
+
+const dbName = process.env.DB_NAME || 'matan_mobile'; // שם מסד הנתונים
+
+// יצירת pool של חיבורים למסד הנתונים (ללא בחירת מסד נתונים ספציפי)
+// pool מאפשר ניהול יעיל של מספר חיבורים בו-זמנית
+const pool = mysql.createPool(dbConfig);
+
+// יצירת pool עם מסד נתונים ספציפי (לשימוש רגיל)
+const poolWithDB = mysql.createPool({
+  ...dbConfig,
+  database: dbName // שם מסד הנתונים
+});
+
+// פונקציה ליצירת מסד נתונים אם הוא לא קיים
+// פונקציה זו יוצרת את מסד הנתונים לפני יצירת הטבלאות
+async function createDatabaseIfNotExists() {
+  try {
+    const connection = await pool.getConnection(); // מקבל חיבור מה-pool ללא מסד נתונים
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``); // יוצר מסד נתונים אם לא קיים
+    console.log(`✅ מסד הנתונים "${dbName}" קיים או נוצר בהצלחה`); // הודעת הצלחה
+    connection.release(); // משחרר את החיבור חזרה ל-pool
+    return true;
+  } catch (error) {
+    console.error('❌ שגיאה ביצירת מסד הנתונים:', error.message);
+    return false;
+  }
+}
+
+// פונקציה לבדיקת החיבור למסד הנתונים
+async function testConnection() {
+  try {
+    // קודם כל יוצר את מסד הנתונים אם הוא לא קיים
+    await createDatabaseIfNotExists();
+    
+    // עכשיו בודק חיבור למסד הנתונים הספציפי
+    const connection = await poolWithDB.getConnection(); // מקבל חיבור מה-pool עם מסד נתונים
+    console.log('✅ חיבור למסד הנתונים הצליח'); // הודעת הצלחה
+    connection.release(); // משחרר את החיבור חזרה ל-pool
+    return true;
+  } catch (error) {
+    // הודעת שגיאה מפורטת יותר עם פרטי החיבור
+    console.error('❌ שגיאה בחיבור למסד הנתונים:');
+    console.error('   הודעת שגיאה:', error.message);
+    console.error('   פרטי חיבור:');
+    console.error('   - Host:', dbConfig.host);
+    console.error('   - User:', dbConfig.user);
+    console.error('   - Database:', dbName);
+    console.error('\n💡 טיפים:');
+    console.error('   1. ודא ש-MySQL מותקן ופועל');
+    console.error('   2. בדוק את פרטי החיבור בקובץ .env');
+    console.error('   3. ודא שיש הרשאות ליצירת מסדי נתונים');
+    return false;
+  }
+}
+
+// ייצוא ה-pool ופונקציית הבדיקה לשימוש בקבצים אחרים
+// משתמשים ב-poolWithDB כי הוא כולל את שם מסד הנתונים
+module.exports = {
+  pool: poolWithDB, // משתמש ב-pool עם מסד הנתונים
+  testConnection,
+  createDatabaseIfNotExists
+};
